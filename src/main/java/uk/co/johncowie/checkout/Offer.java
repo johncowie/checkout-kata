@@ -17,4 +17,8 @@ public class Offer {
     public int getPrice() {
         return price;
     }
+
+    public static Offer noOffer(int price) {
+        return new Offer(1, price);
+    }
 }

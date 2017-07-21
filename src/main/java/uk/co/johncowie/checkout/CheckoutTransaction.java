@@ -1,9 +1,5 @@
 package uk.co.johncowie.checkout;
 
-import uk.co.johncowie.checkout.MultiplePricesForItemException;
-import uk.co.johncowie.checkout.NoPriceForItemException;
-import uk.co.johncowie.checkout.PricingRule;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,12 +36,21 @@ public class CheckoutTransaction {
         }
     }
 
+    private int totalPriceForSku(Map.Entry<String, Integer> skuEntry) {
+        PricingRule pricingRule = prices.get(skuEntry.getKey());
+        return pricingRule.priceForQuantity(skuEntry.getValue());
+    }
+
     public int calculateTotalPrice() {
         return itemQuantities
                 .entrySet()
                 .stream()
-                .mapToInt(e -> prices.get(e.getKey()).priceForQuantity(e.getValue()))
+                .mapToInt(this::totalPriceForSku)
                 .sum();
     }
 
 }
+
+class MultiplePricesForItemException extends RuntimeException {}
+class NoPriceForItemException extends RuntimeException {}
+

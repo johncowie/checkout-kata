@@ -7,7 +7,7 @@ public class PricingRule {
     private final Offer offer;
 
     public PricingRule(String sku, int price) {
-        this(sku, price, null);
+        this(sku, price, Offer.noOffer(price));
     }
 
     public PricingRule(String sku, int price, Offer offer) {
@@ -21,10 +21,10 @@ public class PricingRule {
     }
 
     public int priceForQuantity(int quantity) {
-        if (offer != null) {
-            return (quantity / offer.getQuantity()) * offer.getPrice() + quantity % offer.getQuantity() * price;
-        }
-        return price * quantity;
+        int offerPrice = offer.getPrice();
+        int offerGroups = quantity / offer.getQuantity();
+        int outsideOffer = quantity % offer.getQuantity();
+        return offerGroups * offerPrice + outsideOffer * price;
     }
 
 }
